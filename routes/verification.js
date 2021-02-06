@@ -1,15 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const bodyParser = require("body-parser");
+const mongodb = require("mongodb"); //MongoDB driver
+const bodyparser = require("body-parser");
 const { encodeToken, decodeToken } = require("../services/jwt");
 const { transporter } = require("../services/transporter");
+const mongoClient = mongodb.MongoClient;
 
-const url = "mongodb+srv://satyaprasadbehara:Fdwe6cYnwFMERYMC@cluster0.efor9.mongodb.net/InvoiceApp?retryWrites=true&w=majority";
+const url = "mongodb+srv://satyaprasadbehara:WdImmEMojyk1SsPa@cluster0.mob6p.mongodb.net/InvoiceApp?retryWrites=true&w=majority";
 
 
 require("dotenv").config();
 
-router.use(bodyParser.json());
+router.use(bodyparser.json());
 
 //endpoint for account verification
 router.route("/auth/:token").get(async (req, res) => {
