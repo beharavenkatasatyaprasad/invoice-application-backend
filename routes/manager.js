@@ -16,7 +16,7 @@ router.route("/login").post(async (req, res) => {
   if (!email) {
     errors.push("email field is required !!");
   }
-  
+
   if (!password) {
     errors.push("password field is required !!");
   }
@@ -104,101 +104,53 @@ router.route("/login").post(async (req, res) => {
   }
 });
 
-router.route("/register").post(async (req, res) => {
-  const { fname, lname, userType, email, password } = req.body; //email & password from client
-  let errors = [];
-  if (!fname) {
-    errors.push("fname field is required !!");
-  }
-  if (!lname) {
-    errors.push("lname field is required !!");
-  }
-  if (!password) {
-    errors.push("password field is required !!");
-  }
-  if (
-    userType !== "admin" &&
-    userType !== "employee" &&
-    userType !== "manager"
-  ) {
-    !userType
-      ? errors.push("userType field is required !!")
-      : errors.push(userType + " is not a valid user type !!");
-  }
-  if (errors.length === 0) {
-    try {
-      let client = await mongoClient.connect(url, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }); //connect to db
-      let db = client.db("InvoiceApp"); //db name
-      let user = db.collection("users"); //collection name
-      user.findOne(
-        {
-          email: email,
-        },
-        async (err, result) => {
-          //find if the email is already exist in the collection
-          if (err) {
-            return res.json({
-              error: "something went wrong",
-            });
-          }
-          if (result == null) {
-            let hashedPwd = await generateHash(password);
-            user.insertOne(
-              {
-                fname: fname,
-                lname: lname,
-                email: email,
-                password: hashedPwd,
-                userType: userType,
-                verified: false,
-                confirmed: false,
-              },
-              async (err, result) => {
-                if (err) console.log(err);
-                if (result) {
-                  let emailToken = await encodeToken(email);
-                  let Tokenurl = `http://localhost:3000/auth/${emailToken}`;
-                  let name = fname + " " + lname;
-                  transporter.sendMail(
-                    {
-                      from: '"Invoice Application 🤝" <noreply@crm.com>',
-                      to: `${email}`,
-                      subject: "Account Confirmation Link",
-                      html: `Hello ${name} , Here's your Account verification link: <br> <a style="color:green" href="${Tokenurl}">Click Here To Confirm</a> <br> Link expires in an hour...`,
-                    },
-                    (error, info) => {
-                      console.log(info);
-                      if (error) {
-                        console.log(error);
-                      } else {
-                        return res.json({
-                          message:
-                            "Registration successful...A mail sent to " +
-                            email +
-                            " for user confirmation...",
-                        }); //* if mail sent send this msg
-                      }
-                    }
-                  );
-                }
-              }
-            );
-          } else {
-            return res.json({
-              message: "email already exists!!",
-            });
-          }
-        }
-      );
-    } catch (err) {
-      console.log(Error);
-    }
-  } else {
+router.route("/invoices").get(async (req, res) => {
+  try {
+    let client = await mongoClient.connect(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }); //connect to db
+    let db = client.db("InvoiceApp");
+    let invoices = await db.collection("invoices").find({}).toArray();
+    return res.json({ invoices: invoices });
+  } catch (error) {
+    console.log(error);
     return res.json({
-      error: errors,
+      message: "something went wrong",
+    });
+  }
+});
+
+router.route("/products").get(async (req, res) => {
+  try {
+    let client = await mongoClient.connect(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }); //connect to db
+    let db = client.db("InvoiceApp");
+    let products = await db.collection("products").find({}).toArray();
+    return res.json({ products: products });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      message: "something went wrong",
+    });
+  }
+});
+
+router.route("/customers").get(async (req, res) => {
+  try {
+    let client = await mongoClient.connect(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }); //connect to db
+    let db = client.db("InvoiceApp");
+    let customers = await db.collection("customers").find({}).toArray();
+    return res.json({ customers: customers });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      message: "something went wrong",
     });
   }
 });
