@@ -4,14 +4,25 @@ async function encodeToken(email) {
     let token = jwt.sign({
         email: email
     },
-    'satyasecret', {
-        expiresIn: "1h",
+    'bhargavsecret', {
+        expiresIn: '365d'
+    }); 
+    return token;
+}
+
+async function encodeData(email,endpoint) {
+    let token = jwt.sign({
+        email: email,
+        endpoint: endpoint
+    },
+    'bhargavsecret', {
+        expiresIn: '365d'
     }); 
     return token;
 }
 
 async function decodeToken(token) {
-    let decoded = jwt.verify(token,'satyasecret');
+    let decoded = jwt.verify(token,'bhargavsecret');
     if(decoded){
         return decoded;
     }else{
@@ -21,6 +32,7 @@ async function decodeToken(token) {
 
 exports.encodeToken = encodeToken;
 exports.decodeToken = decodeToken;
+exports.encodeData = encodeData;
 
 // let email = 'xyz@gmail.com'
 // let token =await encodeToken(email)
