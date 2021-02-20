@@ -14,14 +14,11 @@ const url =
 router.use(bodyParser.json());
 
 router.route("/register").post(async (req, res) => {
-  const { fname, lname, email, endpoint,vehicle,vtype, registeredby } = req.body;
+  const { fname, lname, email,vehicle,vtype, registeredby } = req.body;
   const userType = "customer";
   let errors = [];
   if (!fname) {
     errors.push("fname field is required !!");
-  }
-  if (!endpoint) {
-    errors.push("endpoint field is required !!");
   }
   if (!vtype) {
     errors.push("vtype field is required !!");
@@ -68,12 +65,11 @@ router.route("/register").post(async (req, res) => {
                 password: hashedPwd,
                 registeredby: registeredby,
                 vehicle: vehicle,
-                endpoint: endpoint,
                 vtype:vtype,
                 userType: userType,
                 coordinates:{
-                  latitude:28.7041,
-                  longitude:77.1025
+                  latitude:16.5062,
+                  longitude:80.6480
                 }
               },
               async (err, result) => {
