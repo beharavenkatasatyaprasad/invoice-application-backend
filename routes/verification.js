@@ -68,6 +68,7 @@ router.route("/changeCoordinates").post(async (req, res) => {
         if (result) {
           res.status(202).json({
             message: "location updated...",
+            type_: "success",
           });
         }
       }
@@ -282,7 +283,7 @@ router.route("/forgotPassword").get(async (req, res) => {
                 },
               }
             );
-            let Tokenurl = `http://localhost:3000/passwordauth/${emailToken}`;
+            let Tokenurl = `https://wetrack-backend.herokuapp.com/passwordauth/${emailToken}`;
             let name = `${email.split("@")[0]}`;
             //email template for sending token
             var mailOptions = {
