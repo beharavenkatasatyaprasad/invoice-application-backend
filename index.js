@@ -2,16 +2,15 @@ const express = require("express");
 const app = express(); //initialize express
 const bodyParser = require("body-parser"); //body parsing middleware
 const mongodb = require("mongodb"); //MongoDB driver
+const accessToEmployee = require('./routes/employee');
+const accessToAdmin = require('./routes/admin');
+const accessToManager = require('./routes/manager');
 const verification = require('./routes/verification');
-const admin = require('./routes/admin');
 const mongoClient = mongodb.MongoClient;
-const cors = require('cors');
 require('dotenv').config()
 app.use(bodyParser.json());
-app.options('*',cors());
-app.use(cors());
 
-const url = "mongodb+srv://bharg:FCTXxw9PNQdw0Sck@cluster0.p94h7.mongodb.net/trackingapp?retryWrites=true&w=majority";
+const url = "mongodb+srv://satyaprasadbehara:WdImmEMojyk1SsPa@cluster0.mob6p.mongodb.net/InvoiceApp?retryWrites=true&w=majority";
 
 mongoClient.connect(
     url, {
@@ -26,8 +25,10 @@ mongoClient.connect(
 );
 
 app.use('/', verification);
-app.use('/admin',verification,admin);
+app.use('/admin', accessToAdmin, accessToManager, accessToEmployee);
+app.use('/manager', accessToManager, accessToEmployee);
+app.use('/employee', accessToEmployee);
 
-const port = process.env.PORT || 5000;
+let port = process.env.PORT || 3000;
 
-app.listen(port,()=>{ console.log(`Server running on port ${port} 🔥`)});
+app.listen(port, console.log("Server is live 🙌"));
